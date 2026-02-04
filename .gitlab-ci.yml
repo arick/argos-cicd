@@ -1,0 +1,37 @@
+stages:
+  - lint
+  - test
+
+# Only run on master branch
+workflow:
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+
+# Linting with Flake8
+lint:
+  stage: lint
+  image: python:3.11
+  before_script:
+    - pip install flake8 black pylint
+  script:
+    - echo "Checking code style with flake8..."
+    - flake8 . --max-line-length=127 --statistics
+    - echo "Checking formatting with black..."
+    - black --check .
+    - echo "Running pylint..."
+    - pylint --fail-under=7.0 $(find . -name "*.py" ! -path "./venv/*")
+  only:
+    - master
+
+# Run tests
+test:
+  stage: test
+  image: python:3.11
+  before_script:
+    - pip install pytest pytest-cov
+    - pip install -r requirements.txt
+  script:
+    - pytest --cov=. --cov-report=term
+  coverage: '/TOTAL.*\s+(\d+%)/'
+  only:
+    - master
