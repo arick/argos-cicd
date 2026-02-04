@@ -1,0 +1,12 @@
+name: research-anaconda-ident
+
+channels:
+  - defaults
+
+dependencies:
+  - anaconda-client
+  - anaconda-ident
+  - conda-build
+  - python 3.11
+  - setuptools
+  - yaml
